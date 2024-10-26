@@ -31,6 +31,11 @@ const Crawler = struct {
         self.start = 0;
         self.end = 0;
     }
+
+    pub fn jump(self: *Self, steps: usize) void {
+        self.end += steps;
+        self.pull();
+    }
 };
 
 const State = enum { INT, FLOAT, STRING, QUOTED_STRING, COL_SEP, ROW_SEP, NEW_TOKEN, COMPLETE_TOKEN };
@@ -151,10 +156,10 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
                 config.terminator => self.state = State.ROW_SEP,
                 config.text_qualifier => {
                     self.state = State.QUOTED_STRING;
-                    self.crawler.crawl();
-                    self.crawler.pull();
+                    self.crawler.jump(1);
                 },
                 '.' => self.state = State.FLOAT,
+                '\r' =>  self.crawler.jump(1),
                 else => self.state = State.STRING,
             }
         }
@@ -314,6 +319,7 @@ pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
                     self.crawler.pull();
                 },
                 '.' => self.state = State.FLOAT,
+                '\r' =>  self.crawler.jump(1),
                 else => self.state = State.STRING,
             }
         }
