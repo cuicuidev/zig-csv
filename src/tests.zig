@@ -13,7 +13,7 @@ const config = csv.CsvConfig.csv();
 test "full tokenization 512 bytes buffer iris" {
     var allocator = testing.allocator;
 
-    var file = try fs.cwd().openFile("data/iris.csv", .{});
+    var file = try fs.cwd().openFile("src/data/iris.csv", .{});
 
     var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 512);
     defer tokenizer.deinit();
@@ -26,7 +26,7 @@ test "full tokenization 512 bytes buffer iris" {
 test "full tokenization 8192 bytes buffer iris" {
     var allocator = testing.allocator;
 
-    var file = try fs.cwd().openFile("data/iris.csv", .{});
+    var file = try fs.cwd().openFile("src/data/iris.csv", .{});
 
     var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 8192);
     defer tokenizer.deinit();
@@ -39,7 +39,7 @@ test "full tokenization 8192 bytes buffer iris" {
 test "iterator tokenization 512 bytes buffer iris" {
     var allocator = testing.allocator;
 
-    var file = try fs.cwd().openFile("data/iris.csv", .{});
+    var file = try fs.cwd().openFile("src/data/iris.csv", .{});
 
     var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 512);
     defer tokenizer.deinit();
@@ -54,7 +54,7 @@ test "iterator tokenization 512 bytes buffer iris" {
 test "iterator tokenization 8192 bytes buffer iris" {
     var allocator = testing.allocator;
 
-    var file = try fs.cwd().openFile("data/iris.csv", .{});
+    var file = try fs.cwd().openFile("src/data/iris.csv", .{});
 
     var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 8192);
     defer tokenizer.deinit();
@@ -75,7 +75,7 @@ test "iterator tokenization 8192 bytes buffer iris" {
 test "full tokenization 512 bytes buffer bounceshot" {
     var allocator = testing.allocator;
 
-    var file = try fs.cwd().openFile("data/bounceshot.csv", .{});
+    var file = try fs.cwd().openFile("src/data/bounceshot.csv", .{});
 
     var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 512);
     defer tokenizer.deinit();
@@ -88,7 +88,7 @@ test "full tokenization 512 bytes buffer bounceshot" {
 test "full tokenization 8192 bytes buffer bounceshot" {
     var allocator = testing.allocator;
 
-    var file = try fs.cwd().openFile("data/bounceshot.csv", .{});
+    var file = try fs.cwd().openFile("src/data/bounceshot.csv", .{});
 
     var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 8192);
     defer tokenizer.deinit();
@@ -101,7 +101,7 @@ test "full tokenization 8192 bytes buffer bounceshot" {
 test "iterator tokenization 512 bytes buffer bounceshot" {
     var allocator = testing.allocator;
 
-    var file = try fs.cwd().openFile("data/bounceshot.csv", .{});
+    var file = try fs.cwd().openFile("src/data/bounceshot.csv", .{});
 
     var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 512);
     defer tokenizer.deinit();
@@ -116,7 +116,7 @@ test "iterator tokenization 512 bytes buffer bounceshot" {
 test "iterator tokenization 8192 bytes buffer bounceshot" {
     var allocator = testing.allocator;
 
-    var file = try fs.cwd().openFile("data/bounceshot.csv", .{});
+    var file = try fs.cwd().openFile("src/data/bounceshot.csv", .{});
 
     var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 8192);
     defer tokenizer.deinit();

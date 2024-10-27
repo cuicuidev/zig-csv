@@ -75,18 +75,9 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
             self.tokens.deinit();
         }
 
-        /// Takes a writer and prints each one of the tokens using the printRepr interface
-        pub fn printTokens(self: *Self, writer: fs.File.Writer) !void {
-            for (self.tokens.items) |*t| {
-                try t.*.printRepr(writer);
-            }
-        }
-
         /// Tokenizes the whole file and stores all the tokens in the .tokens attribute
         pub fn tokenize(self: *Self) !void {
             while (true) {
-                // std.debug.print("Bytes read: {}\t", .{self.bytes_read});
-                // std.debug.print("N tokens: {}\n", .{self.tokens.items.len});
                 if (self.bytes_read == 0) break;
                 try self.tokenizeBuffer();
             }
@@ -119,7 +110,6 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
             while (self.crawler.end < self.bytes_read) {
                 try self.nextChar();
                 if (self.state == State.COMPLETE_TOKEN) {
-                    // self.carryover_buffer.clearAndFree();
                     return self.tokens.pop();
                 } else {
                     continue;
@@ -159,7 +149,7 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
                     self.crawler.jump(1);
                 },
                 '.' => self.state = State.FLOAT,
-                '\r' =>  self.crawler.jump(1),
+                '\r' => self.crawler.jump(1),
                 else => self.state = State.STRING,
             }
         }
@@ -222,9 +212,6 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
             defer self.allocator.free(slice);
 
             if (carryover_buffer_len > 0) {
-                // std.debug.print("\nCarryover Len: {}\n", .{carryover_buffer_len});
-                // std.debug.print("Crawler Len: {}\n", .{self.crawler.end - self.crawler.start});
-                // std.debug.print("Token Len: {}\n\n", .{token_len});
                 mem.copyForwards(u8, slice[0..carryover_buffer_len], self.carryover_buffer.items);
                 self.carryover_buffer.clearAndFree();
             }
@@ -232,8 +219,6 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
             mem.copyForwards(u8, slice[carryover_buffer_len..], self.buffer[self.crawler.start..self.crawler.end]);
 
             const token = try Token.init(self.allocator, slice, token_type);
-            // const stdout = io.getStdOut().writer();
-            // try token.printRepr(stdout);
             try self.tokens.append(token);
             self.state = State.COMPLETE_TOKEN;
         }
@@ -266,13 +251,6 @@ pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
             self.tokens.deinit();
         }
 
-        /// Takes a writer and prints each one of the tokens using the printRepr interface
-        pub fn printTokens(self: *Self, writer: fs.File.Writer) !void {
-            for (self.tokens.items) |*t| {
-                try t.*.printRepr(writer);
-            }
-        }
-
         /// Tokenizes the whole file and stores all the tokens in the .tokens attribute
         pub fn tokenize(self: *Self) !void {
             while (self.crawler.end < self.slice.len) {
@@ -285,7 +263,6 @@ pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
             while (self.crawler.end < self.slice.len) {
                 try self.nextChar();
                 if (self.state == State.COMPLETE_TOKEN) {
-                    // self.carryover_buffer.clearAndFree();
                     return self.tokens.pop();
                 } else {
                     continue;
@@ -319,7 +296,7 @@ pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
                     self.crawler.pull();
                 },
                 '.' => self.state = State.FLOAT,
-                '\r' =>  self.crawler.jump(1),
+                '\r' => if (config.ignore_slash_r) self.crawler.jump(1),
                 else => self.state = State.STRING,
             }
         }
@@ -376,8 +353,6 @@ pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
         fn addToken(self: *Self, token_type: TokenType) !void {
             const slice: []const u8 = self.slice[self.crawler.start..self.crawler.end];
             const token = try Token.init(self.allocator, slice, token_type);
-            // const stdout = io.getStdOut().writer();
-            // try token.printRepr(stdout);
             try self.tokens.append(token);
             self.state = State.COMPLETE_TOKEN;
         }

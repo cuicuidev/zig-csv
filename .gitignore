@@ -3,4 +3,4 @@ zig-out/
 zig-win/
 
 *.csv
-!data/*.csv
+!src/data/*.csv
