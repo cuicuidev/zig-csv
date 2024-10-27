@@ -49,6 +49,7 @@ const State = enum {
     COMPLETE_TOKEN,
 };
 
+/// Uses a reader to read a csv and tokenizes the contents. Must specify a buffer size.
 pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
     return struct {
         allocator: *mem.Allocator,
@@ -59,6 +60,7 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
 
         const Self = @This();
 
+        /// Constructor
         pub fn init(allocator: *mem.Allocator, reader: fs.File.Reader, buffer_size: usize) !Self {
             const buffer = try allocator.alloc(u8, buffer_size);
             return .{
@@ -70,11 +72,13 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
             };
         }
 
+        /// Destructor
         pub fn deinit(self: *Self) void {
             self.tokenizer.deinit();
             self.allocator.free(self.buffer);
         }
 
+        /// Tokenizes until EOF. Appends the obtained tokens to self.tokens
         pub fn tokenize(self: *Self) !void {
             self.bytes_read = try self.reader.read(self.buffer);
             while (true) {
@@ -84,6 +88,7 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
             }
         }
 
+        /// Iterator interface. For each call to next() you get a token in return, until EOF, in which cas you'll get a null.
         pub fn next(self: *Self) !?Token {
             self.bytes_read = try self.reader.read(self.buffer);
             while (true) {
@@ -95,6 +100,7 @@ pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
     };
 }
 
+/// Tokenizes the contents of a slice following the csv format specified in the config.
 pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
     return struct {
         allocator: *mem.Allocator,
@@ -103,6 +109,7 @@ pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
 
         const Self = @This();
 
+        /// Constructor
         pub fn init(allocator: *mem.Allocator, slice: []const u8) Self {
             return .{
                 .allocator = allocator,
@@ -111,14 +118,17 @@ pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
             };
         }
 
+        /// Destructor
         pub fn deinit(self: *Self) void {
             self.tokenizer.deinit();
         }
 
+        /// Tokenizes the whole slice. Appends the obtained tokens to self.tokens
         pub fn tokenize(self: *Self) !void {
             try self.tokenizer.tokenize(self.slice.len);
         }
 
+        /// Iterator interface. For each call to next() you get a token in return. When the entire slice is consumed, returns null.
         pub fn next(self: *Self) !?Token {
             return try self.tokenizer.next(self.slice.len);
         }
