@@ -1,6 +1,7 @@
 # zig-csv
 
 A library that allows you to parse, create and maniupalte CSV data.
+`v0.1.0`
 ---
 
 ## Features
