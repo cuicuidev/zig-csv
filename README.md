@@ -24,9 +24,12 @@ A library that allows you to tokenize CSV data.
 
     test "slice iris_csv" {
         var allocator = testing.allocator;
+
         var tokenizer = csv.CsvSliceTokenizer(csv_config).init(&allocator, slice_iris);
         defer tokenizer.deinit();
+
         try tokenizer.tokenize();
+
         try testing.expectEqual(90, tokenizer.tokenizer.tokens.items.len);
     }
     ```
@@ -36,11 +39,14 @@ A library that allows you to tokenize CSV data.
     ```zig
     test "slice iter iris_csv" {
         var allocator = testing.allocator;
+
         var tokenizer = csv.CsvSliceTokenizer(csv_config).init(&allocator, slice_iris);
         defer tokenizer.deinit();
+
         while (try tokenizer.next()) |token| {
             token.deinit(); // SET THEM FREE!!!
         }
+
         try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
     }
     ```
@@ -50,10 +56,14 @@ A library that allows you to tokenize CSV data.
     ```zig
     test "reader 512bytes iris.csv" {
         var allocator = testing.allocator;
+
         var file = try fs.cwd().openFile("src/data/iris.csv", .{});
+
         var tokenizer = try csv.CsvReaderTokenizer(csv_config).init(&allocator, file.reader(), 512);
         defer tokenizer.deinit();
+
         try tokenizer.tokenize();
+
         try testing.expectEqual(1510, tokenizer.tokenizer.tokens.items.len);
     }
     ```
@@ -63,12 +73,16 @@ A library that allows you to tokenize CSV data.
     ```zig
     test "reader iter 512bytes iris.csv" {
         var allocator = testing.allocator;
+
         var file = try fs.cwd().openFile("src/data/iris.csv", .{});
+
         var tokenizer = try csv.CsvReaderTokenizer(csv_config).init(&allocator, file.reader(), 512);
         defer tokenizer.deinit();
+
         while (try tokenizer.next()) |token| {
             token.deinit();
         }
+        
         try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
     }
     ```
