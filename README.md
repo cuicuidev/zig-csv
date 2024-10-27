@@ -82,7 +82,7 @@ A library that allows you to tokenize CSV data.
         while (try tokenizer.next()) |token| {
             token.deinit();
         }
-        
+
         try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
     }
     ```
@@ -91,7 +91,7 @@ A library that allows you to tokenize CSV data.
 
 ## Full documentation:
 
-There is no comprehensive documentation at of now, but the library is not as big either. Feel free to check `src/tests.zig` for more examples.
+There is no comprehensive documentation as of now, but the library is not as big either. Feel free to check `src/tests.zig` for more examples.
 
 ## Issues:
 
