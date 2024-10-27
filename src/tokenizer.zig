@@ -32,7 +32,7 @@ const Crawler = struct {
         self.end = 0;
     }
 
-    pub fn jump(self: *Self, steps: usize) void {
+    pub fn skip(self: *Self, steps: usize) void {
         self.end += steps;
         self.pull();
     }
@@ -116,7 +116,7 @@ pub fn CsvSliceTokenizer(comptime config: CsvConfig) type {
     };
 }
 
-pub fn Tokenizer(comptime config: CsvConfig) type {
+fn Tokenizer(comptime config: CsvConfig) type {
     return struct {
         allocator: *mem.Allocator,
         slice: []const u8,
@@ -200,10 +200,10 @@ pub fn Tokenizer(comptime config: CsvConfig) type {
                 config.terminator => self.state = State.ROW_SEP,
                 config.text_qualifier => {
                     self.state = State.QUOTED_STRING;
-                    self.crawler.jump(1);
+                    self.crawler.skip(1);
                 },
                 '.' => self.state = State.FLOAT,
-                '\r' => if (config.ignore_slash_r) self.crawler.jump(1),
+                '\r' => if (config.ignore_slash_r) self.crawler.skip(1),
                 else => self.state = State.STRING,
             }
         }
