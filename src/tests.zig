@@ -15,12 +15,12 @@ test "full tokenization 512 bytes buffer iris" {
 
     var file = try fs.cwd().openFile("src/data/iris.csv", .{});
 
-    var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 512);
+    var tokenizer = try csv.CsvReaderTokenizer(config).init(&allocator, file.reader(), 512);
     defer tokenizer.deinit();
 
     try tokenizer.tokenize();
 
-    try testing.expectEqual(1510, tokenizer.tokens.items.len);
+    try testing.expectEqual(1510, tokenizer.tokenizer.tokens.items.len);
 }
 
 test "full tokenization 8192 bytes buffer iris" {
@@ -28,12 +28,12 @@ test "full tokenization 8192 bytes buffer iris" {
 
     var file = try fs.cwd().openFile("src/data/iris.csv", .{});
 
-    var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 8192);
+    var tokenizer = try csv.CsvReaderTokenizer(config).init(&allocator, file.reader(), 8192);
     defer tokenizer.deinit();
 
     try tokenizer.tokenize();
 
-    try testing.expectEqual(1510, tokenizer.tokens.items.len);
+    try testing.expectEqual(1510, tokenizer.tokenizer.tokens.items.len);
 }
 
 test "iterator tokenization 512 bytes buffer iris" {
@@ -41,14 +41,14 @@ test "iterator tokenization 512 bytes buffer iris" {
 
     var file = try fs.cwd().openFile("src/data/iris.csv", .{});
 
-    var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 512);
+    var tokenizer = try csv.CsvReaderTokenizer(config).init(&allocator, file.reader(), 512);
     defer tokenizer.deinit();
 
     while (try tokenizer.next()) |token| {
         token.deinit();
     }
 
-    try testing.expectEqual(0, tokenizer.tokens.items.len);
+    try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
 }
 
 test "iterator tokenization 8192 bytes buffer iris" {
@@ -56,14 +56,14 @@ test "iterator tokenization 8192 bytes buffer iris" {
 
     var file = try fs.cwd().openFile("src/data/iris.csv", .{});
 
-    var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 8192);
+    var tokenizer = try csv.CsvReaderTokenizer(config).init(&allocator, file.reader(), 8192);
     defer tokenizer.deinit();
 
     while (try tokenizer.next()) |token| {
         token.deinit();
     }
 
-    try testing.expectEqual(0, tokenizer.tokens.items.len);
+    try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
 }
 
 // **END** READER TOKENIZATION TESTS USING THE IRIS DATASET CSV
@@ -77,12 +77,12 @@ test "full tokenization 512 bytes buffer bounceshot" {
 
     var file = try fs.cwd().openFile("src/data/bounceshot.csv", .{});
 
-    var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 512);
+    var tokenizer = try csv.CsvReaderTokenizer(config).init(&allocator, file.reader(), 512);
     defer tokenizer.deinit();
 
     try tokenizer.tokenize();
 
-    try testing.expectEqual(1427, tokenizer.tokens.items.len);
+    try testing.expectEqual(1427, tokenizer.tokenizer.tokens.items.len);
 }
 
 test "full tokenization 8192 bytes buffer bounceshot" {
@@ -90,12 +90,12 @@ test "full tokenization 8192 bytes buffer bounceshot" {
 
     var file = try fs.cwd().openFile("src/data/bounceshot.csv", .{});
 
-    var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 8192);
+    var tokenizer = try csv.CsvReaderTokenizer(config).init(&allocator, file.reader(), 8192);
     defer tokenizer.deinit();
 
     try tokenizer.tokenize();
 
-    try testing.expectEqual(1427, tokenizer.tokens.items.len);
+    try testing.expectEqual(1427, tokenizer.tokenizer.tokens.items.len);
 }
 
 test "iterator tokenization 512 bytes buffer bounceshot" {
@@ -103,14 +103,14 @@ test "iterator tokenization 512 bytes buffer bounceshot" {
 
     var file = try fs.cwd().openFile("src/data/bounceshot.csv", .{});
 
-    var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 512);
+    var tokenizer = try csv.CsvReaderTokenizer(config).init(&allocator, file.reader(), 512);
     defer tokenizer.deinit();
 
     while (try tokenizer.next()) |token| {
         token.deinit();
     }
 
-    try testing.expectEqual(0, tokenizer.tokens.items.len);
+    try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
 }
 
 test "iterator tokenization 8192 bytes buffer bounceshot" {
@@ -118,14 +118,14 @@ test "iterator tokenization 8192 bytes buffer bounceshot" {
 
     var file = try fs.cwd().openFile("src/data/bounceshot.csv", .{});
 
-    var tokenizer = try csv.CsvReaderTokenizer(config).read(&allocator, file.reader(), 8192);
+    var tokenizer = try csv.CsvReaderTokenizer(config).init(&allocator, file.reader(), 8192);
     defer tokenizer.deinit();
 
     while (try tokenizer.next()) |token| {
         token.deinit();
     }
 
-    try testing.expectEqual(0, tokenizer.tokens.items.len);
+    try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
 }
 // **END** READER TOKENIZATION TESTS USING THE IRIS DATASET CSV
 //
@@ -153,25 +153,25 @@ const slice_bounceshot =
 test "full slice tokenization bounceshot" {
     var allocator = testing.allocator;
 
-    var tokenizer = csv.CsvSliceTokenizer(config).read(&allocator, slice_bounceshot);
+    var tokenizer = csv.CsvSliceTokenizer(config).init(&allocator, slice_bounceshot);
     defer tokenizer.deinit();
 
     try tokenizer.tokenize();
 
-    try testing.expectEqual(145, tokenizer.tokens.items.len);
+    try testing.expectEqual(145, tokenizer.tokenizer.tokens.items.len);
 }
 
 test "iterator slice tokenization bounceshot" {
     var allocator = testing.allocator;
 
-    var tokenizer = csv.CsvSliceTokenizer(config).read(&allocator, slice_bounceshot);
+    var tokenizer = csv.CsvSliceTokenizer(config).init(&allocator, slice_bounceshot);
     defer tokenizer.deinit();
 
     while (try tokenizer.next()) |token| {
         token.deinit();
     }
 
-    try testing.expectEqual(0, tokenizer.tokens.items.len);
+    try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
 }
 // **END** SLICE TOKENIZATION TESTS USING THE IRIS DATASET CSV
 //
@@ -194,25 +194,25 @@ const slice_iris =
 test "full slice tokenization iris" {
     var allocator = testing.allocator;
 
-    var tokenizer = csv.CsvSliceTokenizer(config).read(&allocator, slice_iris);
+    var tokenizer = csv.CsvSliceTokenizer(config).init(&allocator, slice_iris);
     defer tokenizer.deinit();
 
     try tokenizer.tokenize();
 
-    try testing.expectEqual(89, tokenizer.tokens.items.len);
+    try testing.expectEqual(89, tokenizer.tokenizer.tokens.items.len);
 }
 
 test "iterator slice tokenization iris" {
     var allocator = testing.allocator;
 
-    var tokenizer = csv.CsvSliceTokenizer(config).read(&allocator, slice_iris);
+    var tokenizer = csv.CsvSliceTokenizer(config).init(&allocator, slice_iris);
     defer tokenizer.deinit();
 
     while (try tokenizer.next()) |token| {
         token.deinit();
     }
 
-    try testing.expectEqual(0, tokenizer.tokens.items.len);
+    try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
 }
 // **END** SLICE TOKENIZATION TESTS USING THE IRIS DATASET CSV
 //
@@ -237,12 +237,12 @@ const ssv_config = csv.CsvConfig.ssv();
 test "full slice tokenization iris using ssv" {
     var allocator = testing.allocator;
 
-    var tokenizer = csv.CsvSliceTokenizer(ssv_config).read(&allocator, slice_iris_ssv);
+    var tokenizer = csv.CsvSliceTokenizer(ssv_config).init(&allocator, slice_iris_ssv);
     defer tokenizer.deinit();
 
     try tokenizer.tokenize();
 
-    try testing.expectEqual(89, tokenizer.tokens.items.len);
+    try testing.expectEqual(89, tokenizer.tokenizer.tokens.items.len);
 }
 
 const slice_iris_psv =
@@ -262,12 +262,12 @@ const psv_config = csv.CsvConfig.psv();
 test "full slice tokenization iris using psv" {
     var allocator = testing.allocator;
 
-    var tokenizer = csv.CsvSliceTokenizer(psv_config).read(&allocator, slice_iris_psv);
+    var tokenizer = csv.CsvSliceTokenizer(psv_config).init(&allocator, slice_iris_psv);
     defer tokenizer.deinit();
 
     try tokenizer.tokenize();
 
-    try testing.expectEqual(89, tokenizer.tokens.items.len);
+    try testing.expectEqual(89, tokenizer.tokenizer.tokens.items.len);
 }
 
 // const slice_iris_tsv =
