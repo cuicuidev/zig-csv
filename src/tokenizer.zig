@@ -38,7 +38,16 @@ const Crawler = struct {
     }
 };
 
-const State = enum { INT, FLOAT, STRING, QUOTED_STRING, COL_SEP, ROW_SEP, NEW_TOKEN, COMPLETE_TOKEN };
+const State = enum {
+    INT,
+    FLOAT,
+    STRING,
+    QUOTED_STRING,
+    DELIMITER,
+    TERMINATOR,
+    NEW_TOKEN,
+    COMPLETE_TOKEN,
+};
 
 pub fn CsvReaderTokenizer(comptime config: CsvConfig) type {
     return struct {
@@ -187,8 +196,8 @@ fn Tokenizer(comptime config: CsvConfig) type {
                 State.FLOAT => try self.stateFloat(char),
                 State.STRING => try self.stateString(char),
                 State.QUOTED_STRING => try self.stateQuotedString(char),
-                State.COL_SEP => try self.stateComma(),
-                State.ROW_SEP => try self.stateLineBreak(),
+                State.DELIMITER => try self.stateComma(),
+                State.TERMINATOR => try self.stateLineBreak(),
                 State.COMPLETE_TOKEN => self.stateCompleteToken(),
             }
         }
@@ -196,8 +205,8 @@ fn Tokenizer(comptime config: CsvConfig) type {
         fn stateNewToken(self: *Self, char: u8) void {
             switch (char) {
                 '0'...'9' => self.state = State.INT,
-                config.delimiter => self.state = State.COL_SEP,
-                config.terminator => self.state = State.ROW_SEP,
+                config.delimiter => self.state = State.DELIMITER,
+                config.terminator => self.state = State.TERMINATOR,
                 config.text_qualifier => {
                     self.state = State.QUOTED_STRING;
                     self.crawler.skip(1);
@@ -244,12 +253,12 @@ fn Tokenizer(comptime config: CsvConfig) type {
 
         fn stateComma(self: *Self) !void {
             self.crawler.crawl();
-            try self.addToken(TokenType.COL_SEP);
+            try self.addToken(TokenType.DELIMITER);
         }
 
         fn stateLineBreak(self: *Self) !void {
             self.crawler.crawl();
-            try self.addToken(TokenType.ROW_SEP);
+            try self.addToken(TokenType.TERMINATOR);
         }
 
         fn stateCompleteToken(self: *Self) void {

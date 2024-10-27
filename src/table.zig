@@ -9,6 +9,7 @@ const token = @import("token.zig");
 const Token = token.Token;
 const TokenType = token.TokenType;
 
+// TODO
 pub fn Table(comptime config: CsvConfig) type {
     return struct {
         allocator: *mem.Allocator,
