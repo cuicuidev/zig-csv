@@ -91,19 +91,19 @@ A library that allows you to tokenize CSV data.
 
 - We can use `CsvConfig` to establish the rules of our csv format. Some predefined formats are already included:
 
-```zig
-const csv_config = csv.CsvConfig.csv();
-const ssv_config = csv.CsvConfig.ssv();
-const psv_config = csv.CsvConfig.psv();
-const tsv_config = csv.CsvConfig.tsv();
+    ```zig
+    const csv_config = csv.CsvConfig.csv();
+    const ssv_config = csv.CsvConfig.ssv();
+    const psv_config = csv.CsvConfig.psv();
+    const tsv_config = csv.CsvConfig.tsv();
 
-const my_config = csv.CsvConfig{
-    .delimiter = ',',
-    .terminator = '\n',
-    .text_qualifier = '"',
-    .ignore_slash_r = true,
-};
-```
+    const my_config = csv.CsvConfig{
+        .delimiter = ',',
+        .terminator = '\n',
+        .text_qualifier = '"',
+        .ignore_slash_r = true,
+    };
+    ```
 
 ---
 
