@@ -9,6 +9,8 @@ A library that allows you to tokenize CSV data.
 ## Features
 - Tokenize CSV structured data using `CsvSliceTokenizer`. You can either use `.tokenize()` and keep all the tokens in memory as long as needed:
     ```zig
+    const csv_config = CsvConfig.csv();
+
     const slice_iris =
         \\"sepal.length","sepal.width","petal.length","petal.width","variety"
         \\5.1,3.5,1.4,.2,"Setosa"
@@ -86,6 +88,22 @@ A library that allows you to tokenize CSV data.
         try testing.expectEqual(0, tokenizer.tokenizer.tokens.items.len);
     }
     ```
+
+- We can use `CsvConfig` to establish the rules of our csv format. Some predefined formats are already included:
+
+```zig
+const csv_config = csv.CsvConfig.csv();
+const ssv_config = csv.CsvConfig.ssv();
+const psv_config = csv.CsvConfig.psv();
+const tsv_config = csv.CsvConfig.tsv();
+
+const my_config = csv.CsvConfig{
+    .delimiter = ',',
+    .terminator = '\n',
+    .text_qualifier = '"',
+    .ignore_slash_r = true,
+};
+```
 
 ---
 
